@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="wrapper">
+            <div class="todoList">
+                <h2>Day Planner</h2>
+                <span><img src="todo img.png" alt="image not found!">
+                </span>
+            </div>
+            <div class="input">
+                <input type="text" id="add" placeholder="Enter your plan">
+                <img src="./addsign.png" alt="no image found" id="addimg" onclick="add()">
+            </div>
+
+            <div class="task_list">
+                <ul>
+                    <li class="checked">Task 01 <span><img src="./cross.png" alt="" class="cross-icon">
+                            <img src="./edit.png" class="edit-Icon">
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const input = document.querySelector("#add");
+        const ul = document.querySelector("ul");
+        const addImg = document.querySelector("#addimg");
+        function add() {
+            if (input.value.trim() === "") {
+                alert("Please add some task!")
+            }
+            else {
+                const li = document.createElement("li");
+                li.innerHTML = input.value;
+                const span = document.createElement("span");
+                const img = document.createElement("img");
+                img.classList.add("cross-icon");
+                const editImg = document.createElement("img");
+                editImg.classList.add("edit-Icon");
+                img.src = "./cross.png";
+                editImg.src = "./edit.png";
+                span.appendChild(img);
+                span.appendChild(editImg);
+                li.appendChild(span);
+                ul.appendChild(li);
+
+                input.value = "";
+                localStore();
+            }
+        };
+        ul.addEventListener("click", function (e) {
+            if (e.target.nodeName === "LI") {
+                e.target.classList.toggle("checked");
+                localStore();
+            }
+            else if (e.target.classList.contains("cross-icon")) {
+                e.target.parentElement.parentElement.remove();
+                localStore();
+            }
+            else if (e.target.classList.contains("edit-Icon")) {
+                input.value = e.target.parentElement.parentElement.textContent;
+                addImg.src = "./save.jpg";
+                addImg.onclick = function () {
+                    updateTask(e.target.parentElement.parentElement);
+                };
+            }
+        });
+
+        function updateTask(taskElement) {
+            taskElement.innerHTML = input.value;
+
+            const span = document.createElement("span");
+            const img = document.createElement("img");
+            img.classList.add("cross-icon");
+            const editImg = document.createElement("img");
+            editImg.classList.add("edit-Icon");
+            img.src = "./cross.png";
+            editImg.src = "./edit.png";
+            span.appendChild(img);
+            span.appendChild(editImg);
+
+            taskElement.appendChild(span);
+
+            input.value = "";
+            addImg.src = "./addsign.png";
+            addImg.onclick = add;
+
+            localStore()
+        }
+
+        function localStore() {
+            localStorage.setItem("data", ul.innerHTML);
+        }
+        function showList() {
+            ul.innerHTML = localStorage.getItem("data");
+        }
+        showList()
+
+
+    </script>
+</body>
+
+</html>
